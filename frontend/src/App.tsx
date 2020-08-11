@@ -1,23 +1,29 @@
 import * as React from 'react';
-import Button from '@material-ui/core/Button';
+import { Books } from './Books';
+
+import { ApolloProvider } from '@apollo/client';
+
+import { ApolloClient, InMemoryCache } from '@apollo/client';
+
+const client = new ApolloClient({
+    uri: 'http://localhost:3000/',
+    cache: new InMemoryCache()
+});
 
 interface Props {
-   name:
+    name:
     string
 }
 
+
 class App extends React.Component<Props> {
-  render() {
-    const { name } = this.props;
-    return (
-      <>
-        <h1>
-          Hello {name}
-        </h1>
-        <Button variant="contained">this is a material UI button</Button>
-      </>
-    );
-  }
+    render() {
+        return (
+            <ApolloProvider client={client}>
+                <Books />
+            </ApolloProvider >
+        );
+    }
 }
 
 export default App;
