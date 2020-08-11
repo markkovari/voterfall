@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  api:
+  backend:
     build:
       context: ./backend
       dockerfile: dev.Dockerfile
@@ -14,9 +14,24 @@ services:
       - app-network
     depends_on:
       - mongodb
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./frontend:/usr/src/app
+    working_dir: /usr/src/app
+    networks:
+      - app-network
+    depends_on:
+      - backend
 
   mongodb:
     image: mongo
+    ports:
+      - "27017:27017"
     networks:
       - app-network
 
