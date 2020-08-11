@@ -1,0 +1,17 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "src/index.tss",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "scripts": {
+    "test": "npm start test",
+    "build": "npm start build",
+    "presetup": "yarn install"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  }
+}
