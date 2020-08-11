@@ -1,43 +1,41 @@
-import { ApolloServer, gql } from 'apollo-server';
+import { ApolloServer, gql, IResolvers } from 'apollo-server';
 
+import { connect } from './database/connect';
+import { ReadBooks, CreateBook } from './database/controllers/book.controller';
 
 const PORT: number = +process.env.PORT || 3000;
 
 const typeDefs = gql`
-  # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
-
-  # This "Book" type defines the queryable fields for every book in our data source.
   type Book {
     title: String
     author: String
   }
 
-  # The "Query" type is special: it lists all of the available queries that
-  # clients can execute, along with the return type for each. In this
-  # case, the "books" query returns an array of zero or more Books (defined above).
   type Query {
     books: [Book]
   }
+  type Mutation {
+    addBook(title: String!, author: String!): Book
+  }
 `;
 
-const books = [
-    {
-        title: 'Harry Potter and the Chamber of Secrets',
-        author: 'J.K. Rowling',
-    },
-    {
-        title: 'Jurassic Park',
-        author: 'Michael Crichton',
-    },
-];
 
-const resolvers = {
-    Query: {
-        books: () => books,
-    },
+const resolvers: IResolvers<any, any> = {
+  Query: {
+    books: async () => await ReadBooks(),
+  },
+  Mutation: {
+    addBook: async (_, args) => {
+      const bookAdded = await CreateBook({ ...args });
+      return bookAdded;
+    }
+  },
 };
 
-const server = new ApolloServer({ typeDefs, resolvers });
+const server = new ApolloServer({ typeDefs, resolvers, cors: true, debug: true });
+
+const db = 'mongodb://localhost:27017/books';
+connect({ db });
 
 server.listen(PORT).then(({ url }) => {
   console.log(`🚀  Server ready at ${url}`);
